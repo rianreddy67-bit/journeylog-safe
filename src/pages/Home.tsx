@@ -4,6 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { MapPin, Star, Clock, DollarSign } from "lucide-react";
 import { useState } from "react";
+import { WeatherCard } from "@/components/WeatherCard";
+import { ExpenseTracker } from "@/components/ExpenseTracker";
+import { ReviewRating } from "@/components/ReviewRating";
 import heroImage from "@/assets/hero-travel.jpg";
 import goldenTriangleImage from "@/assets/golden-triangle.jpg";
 import keralaBackwatersImage from "@/assets/kerala-backwaters.jpg";
@@ -46,6 +49,7 @@ export default function Home() {
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [activeTab, setActiveTab] = useState<"plan" | "expenses" | "reviews">("plan");
 
   const handleSearch = () => {
     setShowRecommendations(true);
@@ -99,6 +103,43 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Enhanced Features Tabs */}
+        <div className="px-6">
+          <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+            <button 
+              onClick={() => setActiveTab("plan")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === "plan" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              🗺️ Plan
+            </button>
+            <button 
+              onClick={() => setActiveTab("expenses")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === "expenses" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              💰 Expenses
+            </button>
+            <button 
+              onClick={() => setActiveTab("reviews")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === "reviews" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              ⭐ Reviews
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className="px-6">
+          {activeTab === "plan" && (
+            <div className="space-y-6">
+              <WeatherCard location={destination || "Delhi"} />
+            </div>
+          )}
+          
+          {activeTab === "expenses" && <ExpenseTracker />}
+          
+          {activeTab === "reviews" && <ReviewRating />}
         </div>
 
         {/* Recommendations */}

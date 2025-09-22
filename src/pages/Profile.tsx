@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Shield, Globe, Download, Settings, LogOut } from "lucide-react";
+import { User, Shield, Globe, Download, Settings, LogOut, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Profile() {
   const [language, setLanguage] = useState("english");
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   const digitalId = "TS" + Math.random().toString(36).substr(2, 9).toUpperCase();
 
@@ -114,6 +116,24 @@ export default function Profile() {
                   <SelectItem value="english">English</SelectItem>
                   <SelectItem value="hindi">हिंदी (Hindi)</SelectItem>
                   <SelectItem value="tamil">தமிழ் (Tamil)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Theme Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                Theme
+              </label>
+              <Select value={theme} onValueChange={setTheme}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">☀️ Light</SelectItem>
+                  <SelectItem value="dark">🌙 Dark</SelectItem>
+                  <SelectItem value="system">💻 System</SelectItem>
                 </SelectContent>
               </Select>
             </div>
