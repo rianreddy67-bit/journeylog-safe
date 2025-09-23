@@ -5,16 +5,30 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Shield, Globe, Download, Settings, LogOut, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/ThemeProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [language, setLanguage] = useState("english");
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   const digitalId = "TS" + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setIsLoading(false);
+    };
+    getUser();
+  }, []);
 
   const handleLanguageChange = (newLanguage: string) => {
     setLanguage(newLanguage);
@@ -31,14 +45,38 @@ export default function Profile() {
     });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('tourSafeAuth');
-    toast({
-      title: "👋 Logged Out",
-      description: "See you next time!",
-    });
-    window.location.href = '/auth';
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error signing out",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "👋 Logged Out",
+        description: "See you next time!",
+      });
+      navigate('/auth');
+    }
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const userName = user?.user_metadata?.first_name && user?.user_metadata?.last_name 
+    ? `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+    : 'User';
+  const userEmail = user?.email || '';
+  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
     <Layout>
@@ -46,14 +84,14 @@ export default function Profile() {
         {/* Profile Header */}
         <div className="text-center space-y-4">
           <Avatar className="h-24 w-24 mx-auto">
-            <AvatarImage src="/api/placeholder/150/150" />
+            <AvatarImage src={user?.user_metadata?.avatar_url} />
             <AvatarFallback className="text-2xl bg-gradient-ocean text-white">
-              JD
+              {userInitials}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold">John Doe</h1>
-            <p className="text-muted-foreground">john.doe@email.com</p>
+            <h1 className="text-2xl font-bold">{userName}</h1>
+            <p className="text-muted-foreground">{userEmail}</p>
             <Badge variant="outline" className="mt-2">
               <Shield className="h-3 w-3 mr-1" />
               Verified Traveler

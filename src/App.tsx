@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Safety from "./pages/Safety";
@@ -13,10 +15,33 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Simple auth check
+// Protected route using Supabase auth
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const auth = localStorage.getItem('tourSafeAuth');
-  return auth ? <>{children}</> : <Navigate to="/auth" replace />;
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setIsAuthenticated(!!session);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center">Loading...</div>
+    </div>;
+  }
+
+  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" replace />;
 };
 
 const App = () => (
