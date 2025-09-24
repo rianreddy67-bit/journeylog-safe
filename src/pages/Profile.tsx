@@ -19,12 +19,19 @@ export default function Profile() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
-  const digitalId = "TS" + Math.random().toString(36).substr(2, 9).toUpperCase();
-
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      if (user) {
+        // Get user profile from database
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        
+        setUser({ ...user, profile });
+      }
       setIsLoading(false);
     };
     getUser();
@@ -72,11 +79,14 @@ export default function Profile() {
     );
   }
 
-  const userName = user?.user_metadata?.first_name && user?.user_metadata?.last_name 
+  const userName = user?.profile?.first_name && user?.profile?.last_name 
+    ? `${user.profile.first_name} ${user.profile.last_name}`
+    : user?.user_metadata?.first_name && user?.user_metadata?.last_name 
     ? `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
     : 'User';
   const userEmail = user?.email || '';
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+  const digitalId = user?.profile?.digital_id || 'Loading...';
 
   return (
     <Layout>
@@ -84,7 +94,7 @@ export default function Profile() {
         {/* Profile Header */}
         <div className="text-center space-y-4">
           <Avatar className="h-24 w-24 mx-auto">
-            <AvatarImage src={user?.user_metadata?.avatar_url} />
+            <AvatarImage src={user?.profile?.avatar_url || user?.user_metadata?.avatar_url} />
             <AvatarFallback className="text-2xl bg-gradient-ocean text-white">
               {userInitials}
             </AvatarFallback>
@@ -94,7 +104,7 @@ export default function Profile() {
             <p className="text-muted-foreground">{userEmail}</p>
             <Badge variant="outline" className="mt-2">
               <Shield className="h-3 w-3 mr-1" />
-              Verified Traveler
+              {user?.profile?.verification_status === 'verified' ? 'Verified Traveler' : 'Unverified'}
             </Badge>
           </div>
         </div>
@@ -120,11 +130,11 @@ export default function Profile() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="opacity-75">Issued</p>
-                  <p>Dec 2024</p>
+                  <p>{user?.profile?.created_at ? new Date(user.profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recent'}</p>
                 </div>
                 <div>
                   <p className="opacity-75">Status</p>
-                  <p>Active</p>
+                  <p>{user?.profile?.verification_status === 'verified' ? 'Verified' : 'Pending'}</p>
                 </div>
               </div>
             </div>
