@@ -14,6 +14,94 @@ export type Database = {
   }
   public: {
     Tables: {
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          currency: string
+          description: string | null
+          expense_date: string
+          id: string
+          receipt_url: string | null
+          trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          expense_date?: string
+          id?: string
+          receipt_url?: string | null
+          trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          expense_date?: string
+          id?: string
+          receipt_url?: string | null
+          trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_updates: {
+        Row: {
+          accuracy: number | null
+          address: string | null
+          created_at: string
+          id: string
+          latitude: number
+          longitude: number
+          trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          address?: string | null
+          created_at?: string
+          id?: string
+          latitude: number
+          longitude: number
+          trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          address?: string | null
+          created_at?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_updates_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -53,6 +141,142 @@ export type Database = {
           updated_at?: string
           user_id?: string
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      safety_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          description: string | null
+          emergency_contacts_notified: boolean | null
+          id: string
+          location: Json | null
+          resolved_at: string | null
+          status: string
+          title: string
+          trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          description?: string | null
+          emergency_contacts_notified?: boolean | null
+          id?: string
+          location?: Json | null
+          resolved_at?: string | null
+          status?: string
+          title: string
+          trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          description?: string | null
+          emergency_contacts_notified?: boolean | null
+          id?: string
+          location?: Json | null
+          resolved_at?: string | null
+          status?: string
+          title?: string
+          trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_alerts_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_documents: {
+        Row: {
+          created_at: string
+          document_type: string
+          document_url: string
+          expiry_date: string | null
+          id: string
+          notes: string | null
+          title: string
+          trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type: string
+          document_url: string
+          expiry_date?: string | null
+          id?: string
+          notes?: string | null
+          title: string
+          trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          document_url?: string
+          expiry_date?: string | null
+          id?: string
+          notes?: string | null
+          title?: string
+          trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_documents_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          budget: number | null
+          created_at: string
+          description: string | null
+          destination: string
+          end_date: string
+          id: string
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          description?: string | null
+          destination: string
+          end_date: string
+          id?: string
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          description?: string | null
+          destination?: string
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
