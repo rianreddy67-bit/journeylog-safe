@@ -72,3 +72,27 @@ verify_jwt = false
 
 [functions.email-notifications]
 verify_jwt = false
+
+[functions.image-generation]
+verify_jwt = false
+
+[functions.document-parser]
+verify_jwt = false
+
+[functions.translation-service]
+verify_jwt = false
+
+[functions.currency-converter]
+verify_jwt = false
+
+[functions.real-time-chat]
+verify_jwt = false
+
+[functions.insurance-integration]
+verify_jwt = false
+
+[functions.receipt-ocr]
+verify_jwt = false
+
+[functions.backup-sync]
+verify_jwt = false
