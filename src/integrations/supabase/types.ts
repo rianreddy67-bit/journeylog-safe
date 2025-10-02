@@ -14,6 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          message_type: string
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          message: string
+          message_type?: string
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_rooms: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          trip_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id: string
+          name: string
+          trip_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          trip_id?: string | null
+        }
+        Relationships: []
+      }
+      data_backups: {
+        Row: {
+          backup_data: Json
+          backup_size: number
+          backup_type: string
+          created_at: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          backup_data?: Json
+          backup_size?: number
+          backup_type: string
+          created_at?: string
+          id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          backup_data?: Json
+          backup_size?: number
+          backup_type?: string
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -60,6 +149,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      insurance_claims: {
+        Row: {
+          claim_data: Json
+          claim_id: string
+          created_at: string
+          id: string
+          policy_number: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claim_data?: Json
+          claim_id: string
+          created_at?: string
+          id?: string
+          policy_number: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claim_data?: Json
+          claim_id?: string
+          created_at?: string
+          id?: string
+          policy_number?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      insurance_policies: {
+        Row: {
+          created_at: string
+          id: string
+          policy_data: Json
+          policy_number: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          policy_data?: Json
+          policy_number: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          policy_data?: Json
+          policy_number?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       location_updates: {
         Row: {
