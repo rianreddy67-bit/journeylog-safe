@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Shield, MapPin, Phone, AlertTriangle, Users, Clock, Plus, Trash2, Edit3 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { LocationTracker } from "@/components/LocationTracker";
 
 const riskZones = [
   { name: "Downtown Market Area", risk: "Medium", reason: "Crowded area, pickpocketing reports" },
@@ -22,8 +23,6 @@ interface EmergencyContact {
 }
 
 export default function Safety() {
-  const [location, setLocation] = useState("New Delhi, India");
-  const [isTracking, setIsTracking] = useState(false);
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
   const [newContact, setNewContact] = useState({ name: "", phone: "", relationship: "" });
   const [showAddForm, setShowAddForm] = useState(false);
@@ -49,14 +48,6 @@ export default function Safety() {
   useEffect(() => {
     localStorage.setItem('tourSafeEmergencyContacts', JSON.stringify(emergencyContacts));
   }, [emergencyContacts]);
-
-  const toggleTracking = () => {
-    setIsTracking(!isTracking);
-    toast({
-      title: isTracking ? "📍 Tracking Stopped" : "📍 Tracking Started",
-      description: isTracking ? "Location sharing disabled" : "Sharing location with emergency contacts",
-    });
-  };
 
   const addEmergencyContact = () => {
     if (!newContact.name || !newContact.phone) {
@@ -111,42 +102,7 @@ export default function Safety() {
         </div>
 
         {/* Location Tracking */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-primary" />
-              Location Tracking
-            </CardTitle>
-            <CardDescription>Share your location with emergency contacts</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{location}</p>
-                <p className="text-sm text-muted-foreground">
-                  Status: {isTracking ? "Tracking Active" : "Tracking Inactive"}
-                </p>
-              </div>
-              <Button 
-                onClick={toggleTracking}
-                variant={isTracking ? "destructive" : "default"}
-                size="sm"
-              >
-                {isTracking ? "Stop Tracking" : "Start Tracking"}
-              </Button>
-            </div>
-            
-            {isTracking && (
-              <Alert>
-                <Shield className="h-4 w-4" />
-                <AlertTitle>Location Sharing Active</AlertTitle>
-                <AlertDescription>
-                  Your location is being shared with your emergency contacts for safety.
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
+        <LocationTracker />
 
         {/* Risk Zones */}
         <Card className="shadow-card">
