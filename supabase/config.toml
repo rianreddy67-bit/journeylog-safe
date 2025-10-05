@@ -96,3 +96,6 @@ verify_jwt = false
 
 [functions.backup-sync]
 verify_jwt = false
+
+[functions.ai-place-recommendations]
+verify_jwt = false

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { WeatherCard } from "@/components/WeatherCard";
 import { ExpenseTracker } from "@/components/ExpenseTracker";
 import { ReviewRating } from "@/components/ReviewRating";
+import { AIPlaceRecommendations } from "@/components/AIPlaceRecommendations";
 import heroImage from "@/assets/hero-travel.jpg";
 import goldenTriangleImage from "@/assets/golden-triangle.jpg";
 import keralaBackwatersImage from "@/assets/kerala-backwaters.jpg";
@@ -49,7 +50,7 @@ export default function Home() {
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const [activeTab, setActiveTab] = useState<"plan" | "expenses" | "reviews">("plan");
+  const [activeTab, setActiveTab] = useState<"plan" | "expenses" | "reviews" | "ai">("plan");
 
   const handleSearch = () => {
     setShowRecommendations(true);
@@ -115,6 +116,12 @@ export default function Home() {
               🗺️ Plan
             </button>
             <button 
+              onClick={() => setActiveTab("ai")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === "ai" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              ✨ AI
+            </button>
+            <button 
               onClick={() => setActiveTab("expenses")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === "expenses" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
@@ -136,6 +143,8 @@ export default function Home() {
               <WeatherCard location={destination || "Delhi"} />
             </div>
           )}
+          
+          {activeTab === "ai" && <AIPlaceRecommendations />}
           
           {activeTab === "expenses" && <ExpenseTracker />}
           
