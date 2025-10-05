@@ -97,11 +97,82 @@ serve(async (req) => {
           throw historyError;
         }
 
+        console.log(`Retrieved ${locations.length} location records for user ${userId}`);
+
         return new Response(
           JSON.stringify({
             success: true,
-            locations: locations,
-            count: locations.length
+            locations: locations || [],
+            count: locations?.length || 0
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      case 'check_geofences': {
+        if (!latitude || !longitude) {
+          throw new Error('Latitude and longitude are required for geofence check');
+        }
+
+        // Get user's active geofences
+        const { data: geofences, error: geofenceError } = await supabase
+          .from('geofences')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('is_active', true);
+
+        if (geofenceError) {
+          throw geofenceError;
+        }
+
+        // Check if user is inside any geofence
+        const alerts = [];
+        for (const fence of geofences || []) {
+          const distance = calculateDistance(
+            latitude, 
+            longitude, 
+            parseFloat(fence.latitude), 
+            parseFloat(fence.longitude)
+          );
+
+          const isInside = distance <= fence.radius_meters;
+          
+          if (fence.alert_type === 'entry' && isInside) {
+            alerts.push({
+              geofence_id: fence.id,
+              name: fence.name,
+              type: 'entry',
+              message: `You have entered: ${fence.name}`,
+              distance: Math.round(distance)
+            });
+          } else if (fence.alert_type === 'exit' && !isInside) {
+            alerts.push({
+              geofence_id: fence.id,
+              name: fence.name,
+              type: 'exit',
+              message: `You have left: ${fence.name}`,
+              distance: Math.round(distance)
+            });
+          } else if (fence.alert_type === 'both') {
+            alerts.push({
+              geofence_id: fence.id,
+              name: fence.name,
+              type: isInside ? 'inside' : 'outside',
+              message: isInside ? `Inside: ${fence.name}` : `Outside: ${fence.name}`,
+              distance: Math.round(distance)
+            });
+          }
+        }
+
+        console.log(`Geofence check for user ${userId}: ${alerts.length} alerts`);
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            alerts: alerts,
+            geofences_checked: geofences?.length || 0
           }),
           {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -201,3 +272,19 @@ serve(async (req) => {
     );
   }
 });
+
+// Helper function to calculate distance between two coordinates (Haversine formula)
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371e3; // Earth's radius in meters
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // Distance in meters
+}

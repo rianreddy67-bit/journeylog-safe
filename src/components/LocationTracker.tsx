@@ -39,8 +39,8 @@ export function LocationTracker() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const history = await locationService.getLocationHistory(user.id);
-      setLocationHistory(history.slice(0, 10)); // Show last 10 locations
+      const response = await locationService.getLocationHistory(user.id);
+      setLocationHistory(response.locations?.slice(0, 10) || []); // Show last 10 locations
     } catch (error) {
       console.error('Error loading location history:', error);
     }
@@ -131,6 +131,23 @@ export function LocationTracker() {
             locationData.accuracy
           );
           
+          // Check geofences
+          const geofenceCheck = await locationService.checkGeofences(
+            user.id,
+            locationData.latitude,
+            locationData.longitude
+          );
+
+          // Show geofence alerts
+          if (geofenceCheck.alerts && geofenceCheck.alerts.length > 0) {
+            geofenceCheck.alerts.forEach((alert: any) => {
+              toast({
+                title: `📍 Geofence Alert`,
+                description: alert.message,
+              });
+            });
+          }
+          
           // Reload history
           await loadLocationHistory();
         } catch (error) {
@@ -183,7 +200,7 @@ export function LocationTracker() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const services = await locationService.getNearbyServices(
+      const response = await locationService.getNearbyServices(
         user.id,
         currentLocation.latitude,
         currentLocation.longitude
@@ -191,7 +208,7 @@ export function LocationTracker() {
 
       toast({
         title: "🏥 Nearby Services",
-        description: `Found ${services.hospitals?.length || 0} hospitals, ${services.police_stations?.length || 0} police stations`,
+        description: `Found ${response.services?.length || 0} emergency services nearby`,
       });
     } catch (error) {
       console.error('Error finding services:', error);

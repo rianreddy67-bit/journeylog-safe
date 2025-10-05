@@ -123,6 +123,20 @@ export const locationService = {
     
     if (error) throw error;
     return data;
+  },
+
+  async checkGeofences(userId: string, latitude: number, longitude: number) {
+    const { data, error } = await supabase.functions.invoke('location-tracker', {
+      body: { 
+        action: 'check_geofences',
+        userId,
+        latitude,
+        longitude
+      }
+    });
+    
+    if (error) throw error;
+    return data;
   }
 };
 
