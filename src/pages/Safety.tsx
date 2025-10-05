@@ -8,6 +8,8 @@ import { Shield, MapPin, Phone, AlertTriangle, Users, Clock, Plus, Trash2, Edit3
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { LocationTracker } from "@/components/LocationTracker";
+import { LocationSharing } from "@/components/LocationSharing";
+import { GeofenceManager } from "@/components/GeofenceManager";
 
 const riskZones = [
   { name: "Downtown Market Area", risk: "Medium", reason: "Crowded area, pickpocketing reports" },
@@ -103,6 +105,12 @@ export default function Safety() {
 
         {/* Location Tracking */}
         <LocationTracker />
+
+        {/* Location Sharing */}
+        <LocationSharing />
+
+        {/* Geofence Management */}
+        <GeofenceManager />
 
         {/* Risk Zones */}
         <Card className="shadow-card">

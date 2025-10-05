@@ -40,7 +40,7 @@ export function LocationSharing() {
         .eq('is_active', true);
 
       if (error) throw error;
-      setSharedWith(data || []);
+      setSharedWith((data as any) || []);
       setIsSharing(data && data.length > 0);
     } catch (error) {
       console.error('Error loading sharing settings:', error);

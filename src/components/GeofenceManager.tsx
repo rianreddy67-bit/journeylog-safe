@@ -42,7 +42,7 @@ export function GeofenceManager() {
         .eq('is_active', true);
 
       if (error) throw error;
-      setGeofences(data || []);
+      setGeofences((data as any) || []);
     } catch (error) {
       console.error('Error loading geofences:', error);
     }
