@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LocationTracker } from "@/components/LocationTracker";
 import { LocationSharing } from "@/components/LocationSharing";
 import { GeofenceManager } from "@/components/GeofenceManager";
+import RealTimeNavigation from "@/components/RealTimeNavigation";
 
 const riskZones = [
   { name: "Downtown Market Area", risk: "Medium", reason: "Crowded area, pickpocketing reports" },
@@ -102,6 +103,9 @@ export default function Safety() {
           <h1 className="text-3xl font-bold">Safety Center</h1>
           <p className="text-muted-foreground">Your safety is our priority</p>
         </div>
+
+        {/* Real-Time Navigation */}
+        <RealTimeNavigation />
 
         {/* Location Tracking */}
         <LocationTracker />
