@@ -99,3 +99,18 @@ verify_jwt = false
 
 [functions.ai-place-recommendations]
 verify_jwt = false
+
+[functions.itinerary-generator]
+verify_jwt = false
+
+[functions.packing-list-generator]
+verify_jwt = false
+
+[functions.trip-analytics]
+verify_jwt = false
+
+[functions.local-events-finder]
+verify_jwt = false
+
+[functions.document-reminder]
+verify_jwt = false
