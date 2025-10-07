@@ -114,3 +114,6 @@ verify_jwt = false
 
 [functions.document-reminder]
 verify_jwt = false
+
+[functions.realtime-emergency]
+verify_jwt = false

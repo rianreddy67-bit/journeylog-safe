@@ -11,6 +11,7 @@ import { LocationTracker } from "@/components/LocationTracker";
 import { LocationSharing } from "@/components/LocationSharing";
 import { GeofenceManager } from "@/components/GeofenceManager";
 import RealTimeNavigation from "@/components/RealTimeNavigation";
+import { EmergencyAIAssistant } from "@/components/EmergencyAIAssistant";
 
 const riskZones = [
   { name: "Downtown Market Area", risk: "Medium", reason: "Crowded area, pickpocketing reports" },
@@ -115,6 +116,9 @@ export default function Safety() {
 
         {/* Geofence Management */}
         <GeofenceManager />
+
+        {/* AI Emergency Assistant */}
+        <EmergencyAIAssistant />
 
         {/* Risk Zones */}
         <Card className="shadow-card">
