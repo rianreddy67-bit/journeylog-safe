@@ -37,14 +37,6 @@ export default function Safety() {
     const saved = localStorage.getItem('tourSafeEmergencyContacts');
     if (saved) {
       setEmergencyContacts(JSON.parse(saved));
-    } else {
-      // Add default emergency contacts
-      const defaultContacts = [
-        { id: "1", name: "Police", phone: "100", relationship: "Emergency Service" },
-        { id: "2", name: "Fire Department", phone: "101", relationship: "Emergency Service" },
-        { id: "3", name: "Ambulance", phone: "102", relationship: "Emergency Service" }
-      ];
-      setEmergencyContacts(defaultContacts);
     }
   }, []);
 
@@ -213,16 +205,14 @@ export default function Safety() {
                     >
                       <Phone className="h-4 w-4" />
                     </Button>
-                    {!["100", "101", "102", "1363"].includes(contact.phone) && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => deleteContact(contact.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => deleteContact(contact.id)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}
