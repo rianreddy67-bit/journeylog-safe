@@ -1,12 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Shield, MapPin, Phone, AlertTriangle, Users, Clock, Plus, Trash2, Edit3 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { Shield } from "lucide-react";
 import { LocationTracker } from "@/components/LocationTracker";
 import { LocationSharing } from "@/components/LocationSharing";
 import { GeofenceManager } from "@/components/GeofenceManager";
@@ -19,76 +14,7 @@ const riskZones = [
   { name: "Riverside Park", risk: "Low", reason: "Well-patrolled area" },
 ];
 
-interface EmergencyContact {
-  id: string;
-  name: string;
-  phone: string;
-  relationship: string;
-}
-
 export default function Safety() {
-  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
-  const [newContact, setNewContact] = useState({ name: "", phone: "", relationship: "" });
-  const [showAddForm, setShowAddForm] = useState(false);
-  const { toast } = useToast();
-
-  // Load emergency contacts from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('tourSafeEmergencyContacts');
-    if (saved) {
-      setEmergencyContacts(JSON.parse(saved));
-    }
-  }, []);
-
-  // Save emergency contacts to localStorage
-  useEffect(() => {
-    localStorage.setItem('tourSafeEmergencyContacts', JSON.stringify(emergencyContacts));
-  }, [emergencyContacts]);
-
-  const addEmergencyContact = () => {
-    if (!newContact.name || !newContact.phone) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in name and phone number",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const contact: EmergencyContact = {
-      id: Date.now().toString(),
-      ...newContact
-    };
-
-    setEmergencyContacts(prev => [...prev, contact]);
-    setNewContact({ name: "", phone: "", relationship: "" });
-    setShowAddForm(false);
-    
-    toast({
-      title: "📞 Contact Added",
-      description: `${newContact.name} added to emergency contacts`,
-    });
-  };
-
-  const deleteContact = (id: string) => {
-    setEmergencyContacts(prev => prev.filter(contact => contact.id !== id));
-    toast({
-      title: "🗑️ Contact Removed",
-      description: "Emergency contact deleted",
-    });
-  };
-
-  const callContact = (name: string, phone: string) => {
-    toast({
-      title: "📞 Calling",
-      description: `Calling ${name} at ${phone}`,
-    });
-    // In a real app, this would trigger a phone call
-    if (navigator.userAgent.includes('Mobile')) {
-      window.location.href = `tel:${phone}`;
-    }
-  };
-
   return (
     <Layout>
       <div className="p-6 space-y-6">
@@ -132,91 +58,6 @@ export default function Safety() {
                 </Badge>
               </div>
             ))}
-          </CardContent>
-        </Card>
-
-        {/* Emergency Contacts */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-primary" />
-                Emergency Contacts
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Contact
-              </Button>
-            </CardTitle>
-            <CardDescription>Quick access to emergency numbers</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Add Contact Form */}
-            {showAddForm && (
-              <div className="p-4 border rounded-lg space-y-3 bg-muted/50">
-                <Input
-                  placeholder="Contact name"
-                  value={newContact.name}
-                  onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
-                />
-                <Input
-                  placeholder="Phone number"
-                  value={newContact.phone}
-                  onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
-                />
-                <Input
-                  placeholder="Relationship (e.g., Family, Friend)"
-                  value={newContact.relationship}
-                  onChange={(e) => setNewContact(prev => ({ ...prev, relationship: e.target.value }))}
-                />
-                <div className="flex gap-2">
-                  <Button onClick={addEmergencyContact} size="sm" variant="gradient">
-                    Save Contact
-                  </Button>
-                  <Button onClick={() => setShowAddForm(false)} size="sm" variant="outline">
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Contact List */}
-            <div className="grid grid-cols-1 gap-3">
-              {emergencyContacts.map((contact) => (
-                <div key={contact.id} className="flex items-center justify-between p-4 border rounded-lg bg-background">
-                  <div className="flex-1" onClick={() => callContact(contact.name, contact.phone)}>
-                    <p className="font-semibold">{contact.name}</p>
-                    <p className="text-sm text-primary font-medium">{contact.phone}</p>
-                    {contact.relationship && (
-                      <p className="text-xs text-muted-foreground">{contact.relationship}</p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => callContact(contact.name, contact.phone)}
-                      className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
-                    >
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => deleteContact(contact.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
 
